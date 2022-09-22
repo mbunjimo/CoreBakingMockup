@@ -1,6 +1,31 @@
+<?php
+session_start();
+?>
+
+<?php include "db.php"?>
+
+<?php include "logout.php" ?>
+
+<?php
+if (isset($_POST['logout'])){
+ 
+  operationsLogout();
+ 
+}
+?>
+
+<!-- this is where we start to write code for send money -->
+
+
+
+
 <!doctype html>
 <html lang="en">
   <head>
+            <!-- Favicon
+    ================================================== -->
+    <link rel="icon" type="image/png" href="public/image/ecoicon.png">
+    
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
@@ -16,13 +41,19 @@
 <link href="../assets/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
+       body{
+        background-image: url("public/image/bankBackground.jpg");
+        background-position: center;
+        background-repeat: no-repeat; 
+        background-size: cover; }
+
       .bd-placeholder-img {
         font-size: 1.125rem;
         text-anchor: middle;
         -webkit-user-select: none;
         -moz-user-select: none;
         user-select: none;
-      }
+      }  
 
       @media (min-width: 768px) {
         .bd-placeholder-img-lg {
@@ -37,11 +68,14 @@
     
 <main>
   <div class="container py-4">
-    <header class="pb-3 mb-4 border-bottom">
-      <a href="/" class="d-flex align-items-center text-dark text-decoration-none">
-        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="32" class="me-2" viewBox="0 0 118 94" role="img"><title>Bootstrap</title><path fill-rule="evenodd" clip-rule="evenodd" d="M24.509 0c-6.733 0-11.715 5.893-11.492 12.284.214 6.14-.064 14.092-2.066 20.577C8.943 39.365 5.547 43.485 0 44.014v5.972c5.547.529 8.943 4.649 10.951 11.153 2.002 6.485 2.28 14.437 2.066 20.577C12.794 88.106 17.776 94 24.51 94H93.5c6.733 0 11.714-5.893 11.491-12.284-.214-6.14.064-14.092 2.066-20.577 2.009-6.504 5.396-10.624 10.943-11.153v-5.972c-5.547-.529-8.934-4.649-10.943-11.153-2.002-6.484-2.28-14.437-2.066-20.577C105.214 5.894 100.233 0 93.5 0H24.508zM80 57.863C80 66.663 73.436 72 62.543 72H44a2 2 0 01-2-2V24a2 2 0 012-2h18.437c9.083 0 15.044 4.92 15.044 12.474 0 5.302-4.01 10.049-9.119 10.88v.277C75.317 46.394 80 51.21 80 57.863zM60.521 28.34H49.948v14.934h8.905c6.884 0 10.68-2.772 10.68-7.727 0-4.643-3.264-7.207-9.012-7.207zM49.948 49.2v16.458H60.91c7.167 0 10.964-2.876 10.964-8.281 0-5.406-3.903-8.178-11.425-8.178H49.948z" fill="currentColor"></path></svg>
-        <span class="fs-4">Operations page</span>
+    <header class="pb-3 mb-4 border-bottom d-flex justify-content-between">
+      <a href="Operations.php" class="d-flex align-items-center text-dark text-decoration-none">
+        <img src="./public/image/eco-removebg-preview.png" width="90" height="32">
+        <span class="fs-4 text-white">Operations page</span>
       </a>
+      <form action="TransferFunds.php" method="post">
+      <input type="submit" name="logout" class=" btn btn-info pb-3 px-5 mb-2 border-bottom " value="Log out">
+      </form>
     </header>
 
     <div class="p-2 mb-4 bg-light rounded-3">
@@ -51,28 +85,183 @@
     </div>
 
     <!-- internal user department actions start here-->
-    <div class="p-2 mb-4 bg-light rounded-3">
+    <form action="TransferFunds.php" method="post">
+      <div class="p-2 mb-4 bg-light rounded-3">
         <div class="container-fluid py-5">
           <h6 class="display-5">Set the Debit account</h6>
 
           <div class="input-group mb-3">
-            <input type="number" class="form-control" aria-label="Amount (to the nearest dollar)">
+            <input type="number" class="form-control" name="receiveracc">
           </div>
 
           <h6 class="display-5 pt-3">Set the Credit account</h6>
 
 
           <div class="input-group mb-3">
-            <input type="number" class="form-control" aria-label="Amount (to the nearest dollar)">
+            <input type="number" class="form-control" name="sendingacc">
           </div>
           
 
-          <h6 class="display-5 pt-5">Set deposit ammount:</h6>
+          <h6 class="display-5 pt-5">Set transfer ammount:</h6>
           <div class="input-group mb-3">
             <span class="input-group-text">$</span>
-            <input type="text" class="form-control" aria-label="Amount (to the nearest dollar)">
+            <input type="text" class="form-control" name="set_ammount">
             <span class="input-group-text">.00</span>
           </div>
+
+          <?php if(isset($_POST['maketransfer'])){
+
+// maketransfer to an account
+
+$receiveracc = $_POST['receiveracc']; 
+$sendingacc = $_POST['sendingacc']; //include this in the funds transfer database
+$transfermoney = $_POST['set_ammount']; //include this in the funds transfer database
+$transferinitiator = $_SESSION['internaluserID'] ;
+$transfertime = date("Y-m-d");
+$transferdate = date("h:i:sa");
+
+$receiveracc = mysqli_real_escape_string($connection , $receiveracc);
+$sendingacc= mysqli_real_escape_string($connection , $sendingacc);
+$transfermoney = mysqli_real_escape_string($connection , $transfermoney);
+
+$queryreceiver = "SELECT * FROM Account WHERE AccID = $receiveracc"; //be aware of possible quotation
+$querysender = "SELECT * FROM Account WHERE AccID = $sendingacc"; //be aware of possible quotation
+
+$select_account_receiver_query = mysqli_query($connection, $queryreceiver);
+$select_account_sender_query = mysqli_query($connection, $querysender);
+
+
+if(!$select_account_receiver_query){
+  die("QUERY FAILED".mysqli_error($connection));
+}
+
+if(!$select_account_sender_query){
+  die("QUERY FAILED".mysqli_error($connection));
+}
+
+
+while($row = mysqli_fetch_array($select_account_receiver_query)){
+  
+   $db_receiver_accountID = $row['AccID'];
+   $db_receiver_accountName = $row['AccName'];
+   $db_receiver_accountBalance = $row['AccBalance'];
+
+}
+
+while($row1 = mysqli_fetch_array($select_account_sender_query)){
+  
+  $db_sender_accountID_1 = $row1['AccID'];
+  $db_sender_accountName_1 = $row1['AccName'];
+  $db_sender_accountBalance_1 = $row1['AccBalance'];
+
+}
+
+if ($db_sender_accountBalance_1 >= $transfermoney){
+
+  $db_sender_accountBalance_1 = $db_sender_accountBalance_1 - $transfermoney;
+  $db_receiver_accountBalance = $db_receiver_accountBalance + $transfermoney;
+
+  $querytoupdatesender = "UPDATE Account SET AccBalance = $db_sender_accountBalance_1 WHERE AccID = $db_sender_accountID_1";
+  if(mysqli_query($connection, $querytoupdatesender)){
+
+    echo "updated senders balance";
+    echo "<br>";
+   } else{
+
+     echo "sender Balance not updated";
+    echo "<br>";
+
+   }
+
+
+  $querytoupdatereceiver = "UPDATE Account SET AccBalance = $db_receiver_accountBalance WHERE AccID = $db_receiver_accountID";
+  if(mysqli_query($connection, $querytoupdatereceiver)){
+
+    echo "updated receiver balance";
+    echo "<br>";
+
+   } else{
+
+     echo "Receiver Balance not updated";
+    echo "<br>";
+
+   }
+
+
+  //sender query
+  $querysenderfundtransfer = "INSERT INTO FundsTransfers (Transfer_creditordebit, Transfer_Ammount, Transfer_type, Transfer_account, Transfer_Date, Transfer_Time,Transfer_initiator )
+  VALUES ('CREDIT', '$transfermoney' , 'DIRECT CREDIT', '$db_receiver_accountID', '$transferdate', '$transfertime', '$transferinitiator')";
+  if(mysqli_query($connection, $querysenderfundtransfer)){
+
+    echo "successfully inserted sender transfer details to database";
+    echo "<br>";
+
+   } else{
+
+     echo "transfer details not inserted in db";
+    echo "<br>";
+
+   }
+
+  //receiver query
+  $queryreceiverfundtransfer = "INSERT INTO FundsTransfers (Transfer_creditordebit, Transfer_Ammount, Transfer_type, Transfer_account, Transfer_Date, Transfer_Time, Transfer_initiator)
+  VALUES ('DEBIT', '$transfermoney' , 'DIRECT DEBIT', ' $db_sender_accountID_1', '$transferdate', '$transfertime', '$transferinitiator')";
+  if(mysqli_query($connection, $queryreceiverfundtransfer)){
+
+    echo "successfully inserted receiver transfer details to database";
+    echo "<br>";
+
+   } else{
+
+     echo "transfer details not inserted in db";
+    echo "<br>";
+
+   }
+
+
+ 
+  if ($querytoupdatesender && $querytoupdatereceiver && $querysenderfundtransfer && $queryreceiverfundtransfer){
+
+    echo "the transfer was successfull";
+    echo "<br>";
+
+    
+    
+  } else {
+
+    echo "Transaction failed";
+    echo "<br>";
+
+  }
+
+
+}else{
+  echo "sender does not have enough Funds";
+  echo "<br>";
+
+}
+
+
+// Close connection
+mysqli_close($connection);
+
+
+}
+
+?>
+
+
+
+
+
+
+
+
+
+
+
+
+
           
         </div>
       </div>
@@ -82,10 +271,11 @@
         <div class="container-fluid p-3 p">            
           
             <div class="d-grid gap-2 pt-5">
-                <button class="btn btn-success fw-bold" type="button">make transfers</button>
+                <input class="btn btn-success fw-bold" type="submit" name="maketransfer">make transfers</button>
               </div>
         </div>
       </div>
+    </form>
 
     <footer class="pt-3 mt-4 text-muted border-top">
       &copy; 2021

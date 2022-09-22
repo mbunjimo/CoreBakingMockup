@@ -3,6 +3,10 @@
 <!doctype html>
 <html lang="en">
   <head>
+            <!-- Favicon
+    ================================================== -->
+    <link rel="icon" type="image/png" href="public/image/ecoicon.png">
+    
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
@@ -135,7 +139,7 @@ if (isset($_POST['submit'])){
     }
 
   } else {
-    echo "Your Password is incorrect";
+    echo "<h3>Your Password is incorrect</h3>";
   }
 }
 

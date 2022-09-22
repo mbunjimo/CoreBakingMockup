@@ -4,7 +4,15 @@ session_start();
 
 <?php include "db.php"?>
 
+<?php include "logout.php" ?>
 
+<?php
+if (isset($_POST['logout'])){
+ 
+  operationsLogout();
+ 
+}
+?>
 
 
 <?php
@@ -34,6 +42,10 @@ session_start();
 <!doctype html>
 <html lang="en">
   <head>
+            <!-- Favicon
+    ================================================== -->
+    <link rel="icon" type="image/png" href="public/image/ecoicon.png">
+    
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
@@ -49,6 +61,12 @@ session_start();
 <link href="../assets/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
+       body{
+        background-image: url("public/image/bankBackground.jpg");
+        background-position: center;
+        background-repeat: no-repeat; 
+        background-size: cover; }
+
       .bd-placeholder-img {
         font-size: 1.125rem;
         text-anchor: middle;
@@ -70,11 +88,14 @@ session_start();
     
 <main>
   <div class="container py-4">
-    <header class="pb-3 mb-4 border-bottom">
-      <a href="/" class="d-flex align-items-center text-dark text-decoration-none">
-        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="32" class="me-2" viewBox="0 0 118 94" role="img"><title>Bootstrap</title><path fill-rule="evenodd" clip-rule="evenodd" d="M24.509 0c-6.733 0-11.715 5.893-11.492 12.284.214 6.14-.064 14.092-2.066 20.577C8.943 39.365 5.547 43.485 0 44.014v5.972c5.547.529 8.943 4.649 10.951 11.153 2.002 6.485 2.28 14.437 2.066 20.577C12.794 88.106 17.776 94 24.51 94H93.5c6.733 0 11.714-5.893 11.491-12.284-.214-6.14.064-14.092 2.066-20.577 2.009-6.504 5.396-10.624 10.943-11.153v-5.972c-5.547-.529-8.934-4.649-10.943-11.153-2.002-6.484-2.28-14.437-2.066-20.577C105.214 5.894 100.233 0 93.5 0H24.508zM80 57.863C80 66.663 73.436 72 62.543 72H44a2 2 0 01-2-2V24a2 2 0 012-2h18.437c9.083 0 15.044 4.92 15.044 12.474 0 5.302-4.01 10.049-9.119 10.88v.277C75.317 46.394 80 51.21 80 57.863zM60.521 28.34H49.948v14.934h8.905c6.884 0 10.68-2.772 10.68-7.727 0-4.643-3.264-7.207-9.012-7.207zM49.948 49.2v16.458H60.91c7.167 0 10.964-2.876 10.964-8.281 0-5.406-3.903-8.178-11.425-8.178H49.948z" fill="currentColor"></path></svg>
-        <span class="fs-4">account managerment page</span>
+    <header class="pb-3 mb-4 border-bottom d-flex justify-content-between">
+      <a href="Operations.php" class="d-flex align-items-center text-dark text-decoration-none">
+        <img src="./public/image/eco-removebg-preview.png" width="90" height="32">
+        <span class="fs-4 text-white">account management page</span>
       </a>
+      <form action="manageAcc2.php" method="post">
+      <input type="submit" name="logout" class=" btn btn-info pb-3 px-5 mb-2 border-bottom " value="Log out">
+      </form>
     </header>
 
     <div class="p-2 mb-4 bg-light rounded-3">
@@ -91,44 +112,81 @@ session_start();
         <div class="container-fluid py-5">
           <h6 class="display-5">fill in the form below, accurately;</h6>
 
-          
-          
+          <form action="manageAcc2.php" method="post">
           <div class="input-group mb-3 mt-2">
             <span class="input-group-text" id="basic-addon1">Change a Account type:</span>
             <!-- <input type="text" class="form-control" placeholder="Last name" aria-label="Lname" aria-describedby="basic-addon1"> -->
-            <select id="cars" name="cars" class="form-control fw-bold"  placeholder="">
+            <select id="cars" name="acctype" class="form-control fw-bold"  placeholder="">
                 <option value="" disabled selected hidden><?php echo $db_AccType; ?></option>
-                <option value="savings">SAVINGS ACCOUNT</option>
-                <option value="payment">CHECKING ACCOUNT</option>
-                <option value="fiat">JUNIOR ACCOUNT</option>
-                <option value="fiat">CURRENT ACCOUNT</option>
-                <option value="fiat">ISLAMIC ACCOUNT</option>
-                <option value="fiat">STUDENT ACCOUNT</option>
-                <option value="fiat">FIXED ACCOUNT</option>
-                <option value="audi">BUSINESS ACCOUNT</option>
-             </select>
-          </div>
-
-          <div class="input-group mb-3 mt-2">
-            <span class="input-group-text" id="basic-addon1">Change Account currency:</span>
-                <select id="cars" name="cars" class="form-control fw-bold" placeholder="">
-                <option value="" disabled selected hidden><?php echo $db_currency; ?></option>
-                <option value="TZS">TZS</option>
-                <option value="USD">USD</option>
+                <option value="SAVINGS ACCOUNT">SAVINGS ACCOUNT</option>
+                <option value="CHECKING ACCOUNT">CHECKING ACCOUNT</option>
+                <option value="JUNIOR ACCOUNT">JUNIOR ACCOUNT</option>
+                <option value="CURRENT ACCOUNT">CURRENT ACCOUNT</option>
+                <option value="ISLAMIC ACCOUNT">ISLAMIC ACCOUNT</option>
+                <option value="STUDENT ACCOUNT">STUDENT ACCOUNT</option>
+                <option value="FIXED ACCOUNT">FIXED ACCOUNT</option>
+                <option value="BUSINESS ACCOUNT">BUSINESS ACCOUNT</option>
              </select>
           </div>
           
-          <div class="input-group mb-3 mt-2">
+          <div class="input-group pb-5 mb-3 mt-2">
             <span class="input-group-text" id="basic-addon1">Change Account status:</span>
-            <select id="cars" name="cars" class="form-control fw-bold">
-                <option value="" disabled selected hidden><?php echo $db_AccStatus; ?></option>
-                <option value="Active">ACTIVE</option>
-                <option value="Dormant">DORMANT</option>
-                <option value="Suspended">SUSPENDED</option>
-                <option value="on hold">ON HOLD</option>
-                <option value="In Active">IN ACTIVE</option>
+            <select id="cars" name="accstatus" class="form-control fw-bold">
+                <option value="" disabled selected hidden><?php echo $db_AccStatus;?></option>
+                <option value="ACTIVE">ACTIVE</option>
+                <option value="DORMANT">DORMANT</option>
+                <option value="SUSPENDED">SUSPENDED</option>
+                <option value="ON HOLD">ON HOLD</option>
+                <option value="IN ACTIVE">IN ACTIVE</option>
              </select>
           </div>
+           
+          <input type="submit" name="changedetails" value="Change account deatails" class="w-100 btn btn-success btn-lg">
+
+          </form>
+
+
+          <?php
+
+           //insert new account details
+
+           if (isset($_POST['changedetails'])){
+
+            if ($_POST['acctype'] && $_POST['accstatus']){
+  
+            $presentacctype = $_POST['acctype'];
+            $presentaccstatus =$_POST['accstatus'];
+        
+            $presentacctype = mysqli_real_escape_string($connection , $presentacctype);
+            $presentaccstatus = mysqli_real_escape_string($connection , $presentaccstatus);
+
+        
+            $Intuserqueryyy = "UPDATE Account SET AccType = '$presentacctype', AccStatus = ' $presentaccstatus' WHERE AccID = {$db_AccID}";
+        
+            //  BE AWARE OF AUTO INCREMENT
+        
+            if(mysqli_query($connection, $Intuserqueryyy)){
+              echo "Records inserted successfully." . "<br>" . "please refresh this page";
+            } else{
+              // echo "ERROR: Could not able to execute $sql. " . mysqli_error($connection);
+              echo "The user creation failed";
+            }
+            
+            // Close connection
+            mysqli_close($connection);
+            }
+
+            else{
+              echo "<h3>please input both details</h3>";
+            }
+
+          }
+        
+          
+          
+          
+          ?>
+
           
         </div>
       </div>
@@ -136,243 +194,47 @@ session_start();
 
     <div class="p-3 mb-4 bg-light rounded-3">
         <div class="container-fluid py-3">
-          <h1 class="display-5 fw-bold">Your account history</h1>
+          <h1 class="display-5 fw-bold">Account's history</h1>
           <div class="table-responsive">
             <table class="table table-striped table-sm">
               <thead>
                 <tr>
                   <th scope="col">Transfer ID</th>
                   <th scope="col">Ammount</th>
+                  <th scope="col">Transfer type</th>
                   <th scope="col">Account</th>
                   <th scope="col">money in/out</th>
                   <th scope="col">Date&Time</th>
+                  <th scope="col">Initiator</th>
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td>1,001</td>
-                  <td>random</td>
-                  <td>data</td>
-                  <td>placeholder</td>
-                  <td>text</td>
-                </tr>
-                <tr>
-                  <td>1,002</td>
-                  <td>placeholder</td>
-                  <td>irrelevant</td>
-                  <td>visual</td>
-                  <td>layout</td>
-                </tr>
-                <tr>
-                  <td>1,003</td>
-                  <td>data</td>
-                  <td>rich</td>
-                  <td>dashboard</td>
-                  <td>tabular</td>
-                </tr>
-                <tr>
-                  <td>1,003</td>
-                  <td>information</td>
-                  <td>placeholder</td>
-                  <td>illustrative</td>
-                  <td>data</td>
-                </tr>
-                <tr>
-                  <td>1,004</td>
-                  <td>text</td>
-                  <td>random</td>
-                  <td>layout</td>
-                  <td>dashboard</td>
-                </tr>
-                <tr>
-                  <td>1,005</td>
-                  <td>dashboard</td>
-                  <td>irrelevant</td>
-                  <td>text</td>
-                  <td>placeholder</td>
-                </tr>
-                <tr>
-                  <td>1,006</td>
-                  <td>dashboard</td>
-                  <td>illustrative</td>
-                  <td>rich</td>
-                  <td>data</td>
-                </tr>
-                <tr>
-                  <td>1,007</td>
-                  <td>placeholder</td>
-                  <td>tabular</td>
-                  <td>information</td>
-                  <td>irrelevant</td>
-                </tr>
-                <tr>
-                  <td>1,008</td>
-                  <td>random</td>
-                  <td>data</td>
-                  <td>placeholder</td>
-                  <td>text</td>
-                </tr>
-                <tr>
-                  <td>1,009</td>
-                  <td>placeholder</td>
-                  <td>irrelevant</td>
-                  <td>visual</td>
-                  <td>layout</td>
-                </tr>
-                <tr>
-                  <td>1,010</td>
-                  <td>data</td>
-                  <td>rich</td>
-                  <td>dashboard</td>
-                  <td>tabular</td>
-                </tr>
-                <tr>
-                  <td>1,011</td>
-                  <td>information</td>
-                  <td>placeholder</td>
-                  <td>illustrative</td>
-                  <td>data</td>
-                </tr>
-                <tr>
-                  <td>1,012</td>
-                  <td>text</td>
-                  <td>placeholder</td>
-                  <td>layout</td>
-                  <td>dashboard</td>
-                </tr>
-                <tr>
-                  <td>1,013</td>
-                  <td>dashboard</td>
-                  <td>irrelevant</td>
-                  <td>text</td>
-                  <td>visual</td>
-                </tr>
-                <tr>
-                  <td>1,014</td>
-                  <td>dashboard</td>
-                  <td>illustrative</td>
-                  <td>rich</td>
-                  <td>data</td>
-                </tr>
-                <tr>
-                  <td>1,015</td>
-                  <td>random</td>
-                  <td>tabular</td>
-                  <td>information</td>
-                  <td>text</td>
-                </tr>
-                <tr>
-                  <td>1,001</td>
-                  <td>random</td>
-                  <td>data</td>
-                  <td>placeholder</td>
-                  <td>text</td>
-                </tr>
-                <tr>
-                  <td>1,002</td>
-                  <td>placeholder</td>
-                  <td>irrelevant</td>
-                  <td>visual</td>
-                  <td>layout</td>
-                </tr>
-                <tr>
-                  <td>1,003</td>
-                  <td>data</td>
-                  <td>rich</td>
-                  <td>dashboard</td>
-                  <td>tabular</td>
-                </tr>
-                <tr>
-                  <td>1,003</td>
-                  <td>information</td>
-                  <td>placeholder</td>
-                  <td>illustrative</td>
-                  <td>data</td>
-                </tr>
-                <tr>
-                  <td>1,004</td>
-                  <td>text</td>
-                  <td>random</td>
-                  <td>layout</td>
-                  <td>dashboard</td>
-                </tr>
-                <tr>
-                  <td>1,005</td>
-                  <td>dashboard</td>
-                  <td>irrelevant</td>
-                  <td>text</td>
-                  <td>placeholder</td>
-                </tr>
-                <tr>
-                  <td>1,006</td>
-                  <td>dashboard</td>
-                  <td>illustrative</td>
-                  <td>rich</td>
-                  <td>data</td>
-                </tr>
-                <tr>
-                  <td>1,007</td>
-                  <td>placeholder</td>
-                  <td>tabular</td>
-                  <td>information</td>
-                  <td>irrelevant</td>
-                </tr>
-                <tr>
-                  <td>1,008</td>
-                  <td>random</td>
-                  <td>data</td>
-                  <td>placeholder</td>
-                  <td>text</td>
-                </tr>
-                <tr>
-                  <td>1,009</td>
-                  <td>placeholder</td>
-                  <td>irrelevant</td>
-                  <td>visual</td>
-                  <td>layout</td>
-                </tr>
-                <tr>
-                  <td>1,010</td>
-                  <td>data</td>
-                  <td>rich</td>
-                  <td>dashboard</td>
-                  <td>tabular</td>
-                </tr>
-                <tr>
-                  <td>1,011</td>
-                  <td>information</td>
-                  <td>placeholder</td>
-                  <td>illustrative</td>
-                  <td>data</td>
-                </tr>
-                <tr>
-                  <td>1,012</td>
-                  <td>text</td>
-                  <td>placeholder</td>
-                  <td>layout</td>
-                  <td>dashboard</td>
-                </tr>
-                <tr>
-                  <td>1,013</td>
-                  <td>dashboard</td>
-                  <td>irrelevant</td>
-                  <td>text</td>
-                  <td>visual</td>
-                </tr>
-                <tr>
-                  <td>1,014</td>
-                  <td>dashboard</td>
-                  <td>illustrative</td>
-                  <td>rich</td>
-                  <td>data</td>
-                </tr>
-                <tr>
-                  <td>1,015</td>
-                  <td>random</td>
-                  <td>tabular</td>
-                  <td>information</td>
-                  <td>text</td>
-                </tr>
+              <?php
+                
+                $queryfundstransfers = "SELECT * FROM FundsTransfers WHERE Transfer_account = {$db_AccID} ";
+
+                $resultfundstransfers = mysqli_query($connection, $queryfundstransfers);
+
+                mysqli_num_rows($resultfundstransfers);
+
+                while( $record = mysqli_fetch_assoc($resultfundstransfers)){
+
+                ?>
+
+              <tr>
+				          <!--FETCHING DATA FROM EACH
+					              ROW OF EVERY COLUMN-->
+		            		<td><?php echo $record['FundsTransfer_ID'];?></td>
+				            <td><?php echo $record['Transfer_Ammount'];?></td>
+				            <td><?php echo $record['Transfer_type'];?></td>
+				            <td><?php echo $record['Transfer_account'];?></td>
+				            <td><?php echo $record['Transfer_creditordebit'];?></td>
+				            <td><?php echo $record['Transfer_Date'] . " " . $record['Transfer_Time'] ;?></td>
+				            <td><?php echo $record['Transfer_initiator'];?></td>
+			        </tr>
+			         <?php
+                }
+			        ?>
               </tbody>
             </table>
           </div>
